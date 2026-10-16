@@ -4,7 +4,7 @@ One line per loop: what you asked the agent, what happened, and what you changed
 
 | # | Prompt (short) | What happened | What we changed |
 |---:|---|---|---|
-| 1 | | | |
+| 1 | Draft ten quiz questions about LLMs, tokens, context windows and agents in one data file | Agent wrote `src/questions.ts` with ten four-option questions | Nothing yet; the team still needs to fact-check all ten and move the best five to the top |
 
 ## For the Presentation
 
