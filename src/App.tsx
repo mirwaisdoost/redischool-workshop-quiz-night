@@ -4,7 +4,7 @@ import { questions } from './questions'
 // The quiz plays the first five questions from questions.ts.
 const quizQuestions = questions.slice(0, 5)
 const letters = ['A', 'B', 'C', 'D']
-const secondsPerQuestion = 60
+const secondsPerQuestion = 30
 
 type Screen = 'start' | 'question' | 'result'
 
@@ -124,7 +124,7 @@ export default function App() {
         <ul className="rules">
           <li>Some questions have one right answer, others ask you to choose all that apply.</li>
           <li>A right answer on the first try earns a point.</li>
-          <li>You have 1 minute for each question. When the time runs out, the quiz moves on.</li>
+          <li>You have 30 seconds for each question. When the time runs out, the quiz moves on.</li>
         </ul>
         <button className="primary" onClick={startQuiz}>
           Start
