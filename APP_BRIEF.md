@@ -48,3 +48,5 @@ When an override is requested, replace "None" with the specific participant deci
 ## Project decisions
 
 - Second chance (2026-10-16, Mirwais): a wrong answer stays red and the player gets one more try; the right answer is shown only after two wrong tries. Only a right answer on the first try earns a point.
+- "Choose all that apply" questions (2026-10-16, Mirwais): some questions have more than one right answer. The player ticks answers and clicks "Check answer"; the same two-try rule applies. Two of them are in the first five, so they show up in the game.
+- New look (2026-10-16, Mirwais): card layout on a colourful background, progress bar, A–D answer badges and a result message that depends on the score.
