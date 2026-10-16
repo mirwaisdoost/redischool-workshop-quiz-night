@@ -105,6 +105,13 @@ export default function App() {
     }
   }
 
+  // Leave the quiz and go back to the topic list. The score of this round is thrown away.
+  function quitQuiz() {
+    if (!window.confirm('Quit this quiz? Your score for this round will be lost.')) return
+    resetQuestion() // also stops the timer
+    setScreen('start')
+  }
+
   function nextQuestion() {
     if (current + 1 < quizQuestions.length) {
       setCurrent(current + 1)
@@ -182,10 +189,15 @@ export default function App() {
         <div className="progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      <p className="topic-label">
-        {topic.emoji} {topic.name}
-        {isMulti && <span className="tag">Choose all that apply</span>}
-      </p>
+      <div className="topic-row">
+        <p className="topic-label">
+          {topic.emoji} {topic.name}
+          {isMulti && <span className="tag">Choose all that apply</span>}
+        </p>
+        <button className="quit" onClick={quitQuiz}>
+          ✕ Quit
+        </button>
+      </div>
       <h2>{question.text}</h2>
 
       <div className="options">
