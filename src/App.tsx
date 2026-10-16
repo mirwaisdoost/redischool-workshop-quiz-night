@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { topics, type Topic } from './questions'
 
 const letters = ['A', 'B', 'C', 'D']
@@ -35,6 +35,8 @@ export default function App() {
   const [done, setDone] = useState(false) // true when this question is finished
   const [timeLeft, setTimeLeft] = useState(secondsPerQuestion) // seconds left on this question
   const [timedOut, setTimedOut] = useState(false) // true when the time ran out before an answer
+  const [askingToQuit, setAskingToQuit] = useState(false) // true while the quit window is open
+  const quitDialog = useRef<HTMLDialogElement>(null) // the quit window on the page
 
   const quizQuestions = topic.questions
   const question = quizQuestions[current]
@@ -58,9 +60,10 @@ export default function App() {
   }
 
   // Count down one second at a time while the question is still open.
+  // The timer pauses while the quit window is open.
   // When the time reaches zero, the question ends without a point.
   useEffect(() => {
-    if (screen !== 'question' || done) return
+    if (screen !== 'question' || done || askingToQuit) return
     const timer = setTimeout(() => {
       if (timeLeft > 1) {
         setTimeLeft(timeLeft - 1)
@@ -71,16 +74,16 @@ export default function App() {
       }
     }, 1000)
     return () => clearTimeout(timer) // stop this tick if the player answers or leaves the question
-  }, [screen, done, timeLeft])
+  }, [screen, done, timeLeft, askingToQuit])
 
   // After "Time's up!", wait 3 seconds so the player can read the message, then skip ahead.
   // useEffectEvent lets the timer call the latest nextQuestion without restarting the timer.
   const skipAfterTimeout = useEffectEvent(() => nextQuestion())
   useEffect(() => {
-    if (!timedOut) return
+    if (!timedOut || askingToQuit) return
     const timer = setTimeout(skipAfterTimeout, 3000)
     return () => clearTimeout(timer) // cancelled if the player clicks the button first
-  }, [timedOut])
+  }, [timedOut, askingToQuit])
 
   // The player gets two tries per question. Only a right answer on the first try earns a point.
   function checkAnswer(picks: number[]) {
@@ -105,9 +108,17 @@ export default function App() {
     }
   }
 
+  // The Quit button opens a window that asks the player to confirm.
+  // showModal() puts it on top of the quiz; the Escape key also closes it.
+  function askToQuit() {
+    setAskingToQuit(true)
+    quitDialog.current?.showModal()
+  }
+
   // Leave the quiz and go back to the topic list. The score of this round is thrown away.
   function quitQuiz() {
-    if (!window.confirm('Quit this quiz? Your score for this round will be lost.')) return
+    quitDialog.current?.close()
+    setAskingToQuit(false) // set it here too: the window disappears before its close event arrives
     resetQuestion() // also stops the timer
     setScreen('start')
   }
@@ -194,7 +205,7 @@ export default function App() {
           {topic.emoji} {topic.name}
           {isMulti && <span className="tag">Choose all that apply</span>}
         </p>
-        <button className="quit" onClick={quitQuiz}>
+        <button className="quit" onClick={askToQuit}>
           ✕ Quit
         </button>
       </div>
@@ -251,6 +262,28 @@ export default function App() {
           </button>
         )}
       </div>
+
+      <dialog
+        ref={quitDialog}
+        className="modal"
+        aria-labelledby="quit-title"
+        onClose={() => setAskingToQuit(false)}
+      >
+        <div className="modal-icon">🚪</div>
+        <h2 id="quit-title">Quit this quiz?</h2>
+        <p className="lead">
+          You are on question {current + 1} of {quizQuestions.length} with {score} {score === 1 ? 'point' : 'points'}.
+          If you quit now, this round's score will be lost.
+        </p>
+        <div className="buttons">
+          <button className="primary" onClick={() => quitDialog.current?.close()} autoFocus>
+            Keep playing
+          </button>
+          <button className="danger" onClick={quitQuiz}>
+            Quit quiz
+          </button>
+        </div>
+      </dialog>
     </main>
   )
 }

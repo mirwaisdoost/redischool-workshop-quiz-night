@@ -320,3 +320,60 @@ button:disabled {
   font-weight: 800;
   color: var(--purple);
 }
+
+.modal {
+  width: min(26rem, calc(100% - 2rem));
+  padding: 2rem;
+  text-align: center;
+  color: var(--text);
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.3);
+}
+
+.modal[open] {
+  animation: pop-in 0.2s ease-out;
+}
+
+.modal::backdrop {
+  background: rgba(29, 27, 44, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.modal h2 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.modal .lead {
+  margin: 0 0 1.5rem;
+}
+
+.modal-icon {
+  font-size: 2.75rem;
+}
+
+.danger {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--red);
+  background: white;
+  border: 2px solid var(--red);
+  border-radius: 999px;
+}
+
+.danger:hover {
+  color: white;
+  background: var(--red);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

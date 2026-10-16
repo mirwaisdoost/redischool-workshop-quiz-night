@@ -10,6 +10,7 @@ One line per loop: what you asked the agent, what happened, and what you changed
 | 4 | Add more multiple-choice questions and make the design look good | Agent added four "choose all that apply" questions (two in the first five) and a new design; a browser test checked single and multi questions on desktop and phone width | Nothing yet; fact-check the new questions too |
 | 5 | Create different topics; when the player picks one, show five questions for it | Agent grouped the questions into four topics with five each (six new questions) and added a topic picker; a browser test played all four topics | Nothing yet; fact-check the six new questions in "AI agents" and "Using AI well" |
 | 6 | Add a Quit button inside the quiz that goes back to the home page | Agent added "✕ Quit" next to the topic name, with a confirmation; a browser test checked Cancel, OK, and quitting during the "Time's up!" pause | Nothing yet |
+| 7 | Use a nice modal instead of the browser popup when quitting | Agent built a styled quit window that pauses the timer; the browser test found that the timer stayed paused in the next quiz after quitting | Agent fixed the stuck pause and re-ran the test |
 
 ## For the Presentation
 
