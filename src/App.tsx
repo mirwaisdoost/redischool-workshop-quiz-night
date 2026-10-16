@@ -10,27 +10,34 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('start')
   const [current, setCurrent] = useState(0) // index of the current question
   const [score, setScore] = useState(0)
-  const [picked, setPicked] = useState<number | null>(null) // answer the player clicked
+  const [wrongPicks, setWrongPicks] = useState<number[]>([]) // wrong answers clicked on this question
+  const [done, setDone] = useState(false) // true when this question is finished
 
   function startQuiz() {
     setCurrent(0)
     setScore(0)
-    setPicked(null)
+    setWrongPicks([])
+    setDone(false)
     setScreen('question')
   }
 
+  // The player gets two tries per question. Only a right answer on the first try earns a point.
   function pickAnswer(index: number) {
-    if (picked !== null) return // only one answer per question
-    setPicked(index)
+    if (done || wrongPicks.includes(index)) return
     if (index === quizQuestions[current].correctIndex) {
-      setScore(score + 1)
+      if (wrongPicks.length === 0) setScore(score + 1)
+      setDone(true)
+    } else {
+      setWrongPicks([...wrongPicks, index])
+      if (wrongPicks.length === 1) setDone(true) // second wrong answer: no tries left
     }
   }
 
   function nextQuestion() {
     if (current + 1 < quizQuestions.length) {
       setCurrent(current + 1)
-      setPicked(null)
+      setWrongPicks([])
+      setDone(false)
     } else {
       setScreen('result')
     }
@@ -59,7 +66,6 @@ export default function App() {
   }
 
   const question = quizQuestions[current]
-  const answered = picked !== null
   const isLast = current + 1 === quizQuestions.length
 
   return (
@@ -71,25 +77,34 @@ export default function App() {
       <div className="options">
         {question.options.map((option, index) => {
           let className = 'option'
-          if (answered && index === question.correctIndex) className += ' correct'
-          else if (answered && index === picked) className += ' wrong'
+          if (done && index === question.correctIndex) className += ' correct'
+          else if (wrongPicks.includes(index)) className += ' wrong'
           return (
-            <button key={index} className={className} onClick={() => pickAnswer(index)} disabled={answered}>
+            <button
+              key={index}
+              className={className}
+              onClick={() => pickAnswer(index)}
+              disabled={done || wrongPicks.includes(index)}
+            >
               {option}
             </button>
           )
         })}
       </div>
-      {answered && (
-        <div role="status">
-          <p className="feedback">
-            {picked === question.correctIndex
-              ? '✅ Correct!'
-              : `❌ Wrong. The right answer is: ${question.options[question.correctIndex]}`}
-          </p>
-          <button onClick={nextQuestion}>{isLast ? 'See result' : 'Next question'}</button>
-        </div>
-      )}
+      <div role="status">
+        {!done && wrongPicks.length === 1 && <p className="feedback">❌ Not quite. Try one more time!</p>}
+        {done && (
+          <>
+            <p className="feedback">
+              {wrongPicks.length === 0 && '✅ Correct!'}
+              {wrongPicks.length === 1 && '✅ Correct on your second try! (no point this time)'}
+              {wrongPicks.length === 2 &&
+                `❌ Wrong again. The right answer is: ${question.options[question.correctIndex]}`}
+            </p>
+            <button onClick={nextQuestion}>{isLast ? 'See result' : 'Next question'}</button>
+          </>
+        )}
+      </div>
     </main>
   )
 }
