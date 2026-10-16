@@ -144,9 +144,9 @@ export default function App() {
 
         {/* Two columns side by side; on small screens they stack (see .columns in index.css). */}
         <div className="columns">
-          <section className="panel" aria-labelledby="rules-title">
+          <section className="column" aria-labelledby="rules-title">
             <h2 id="rules-title">📋 Rules</h2>
-            <ul className="rules">
+            <ul className="rules panel">
               <li>Each topic has {topic.questions.length} questions, and you get two tries for each one.</li>
               <li>Some questions have one right answer, others ask you to choose all that apply.</li>
               <li>A right answer on the first try earns a point.</li>
@@ -156,7 +156,7 @@ export default function App() {
             </ul>
           </section>
 
-          <section aria-labelledby="topics-title">
+          <section className="column" aria-labelledby="topics-title">
             <h2 id="topics-title">🗂️ Topics</h2>
             <div className="topics">
               {topics.map((t) => (
