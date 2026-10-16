@@ -104,6 +104,14 @@ button:disabled {
   color: var(--purple);
 }
 
+.timer {
+  font-variant-numeric: tabular-nums;
+}
+
+.timer.hurry {
+  color: var(--red);
+}
+
 .progress {
   height: 0.5rem;
   margin: 0.6rem 0 1.25rem;

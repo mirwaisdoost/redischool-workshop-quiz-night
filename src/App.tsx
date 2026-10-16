@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useEffectEvent, useState } from 'react'
 import { questions } from './questions'
 
 // The quiz plays the first five questions from questions.ts.
 const quizQuestions = questions.slice(0, 5)
 const letters = ['A', 'B', 'C', 'D']
+const secondsPerQuestion = 60
 
 type Screen = 'start' | 'question' | 'result'
 
@@ -19,6 +20,12 @@ function resultMessage(score: number, total: number) {
   return '📚 Good start! Play again to learn more.'
 }
 
+// Shows seconds as minutes and seconds, for example 75 → "1:15".
+function formatTime(seconds: number) {
+  const s = seconds % 60
+  return `${Math.floor(seconds / 60)}:${s < 10 ? '0' : ''}${s}`
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>('start')
   const [current, setCurrent] = useState(0) // index of the current question
@@ -27,6 +34,8 @@ export default function App() {
   const [wrongPicks, setWrongPicks] = useState<number[]>([]) // wrong answers the player chose
   const [tries, setTries] = useState(0) // wrong tries on this question (0, 1 or 2)
   const [done, setDone] = useState(false) // true when this question is finished
+  const [timeLeft, setTimeLeft] = useState(secondsPerQuestion) // seconds left on this question
+  const [timedOut, setTimedOut] = useState(false) // true when the time ran out before an answer
 
   const question = quizQuestions[current]
   const isMulti = question.correct.length > 1
@@ -36,6 +45,8 @@ export default function App() {
     setWrongPicks([])
     setTries(0)
     setDone(false)
+    setTimeLeft(secondsPerQuestion)
+    setTimedOut(false)
   }
 
   function startQuiz() {
@@ -44,6 +55,31 @@ export default function App() {
     resetQuestion()
     setScreen('question')
   }
+
+  // Count down one second at a time while the question is still open.
+  // When the time reaches zero, the question ends without a point.
+  useEffect(() => {
+    if (screen !== 'question' || done) return
+    const timer = setTimeout(() => {
+      if (timeLeft > 1) {
+        setTimeLeft(timeLeft - 1)
+      } else {
+        setTimeLeft(0)
+        setTimedOut(true)
+        setDone(true)
+      }
+    }, 1000)
+    return () => clearTimeout(timer) // stop this tick if the player answers or leaves the question
+  }, [screen, done, timeLeft])
+
+  // After "Time's up!", wait 3 seconds so the player can read the message, then skip ahead.
+  // useEffectEvent lets the timer call the latest nextQuestion without restarting the timer.
+  const skipAfterTimeout = useEffectEvent(() => nextQuestion())
+  useEffect(() => {
+    if (!timedOut) return
+    const timer = setTimeout(skipAfterTimeout, 3000)
+    return () => clearTimeout(timer) // cancelled if the player clicks the button first
+  }, [timedOut])
 
   // The player gets two tries per question. Only a right answer on the first try earns a point.
   function checkAnswer(picks: number[]) {
@@ -88,6 +124,7 @@ export default function App() {
         <ul className="rules">
           <li>Some questions have one right answer, others ask you to choose all that apply.</li>
           <li>A right answer on the first try earns a point.</li>
+          <li>You have 1 minute for each question. When the time runs out, the quiz moves on.</li>
         </ul>
         <button className="primary" onClick={startQuiz}>
           Start
@@ -113,6 +150,7 @@ export default function App() {
 
   const isLast = current + 1 === quizQuestions.length
   const failed = done && tries === 2
+  const hurry = timeLeft <= 10
   const progress = ((current + (done ? 1 : 0)) / quizQuestions.length) * 100
   const rightAnswers = question.correct.map((i) => question.options[i]).join(', ')
 
@@ -121,6 +159,9 @@ export default function App() {
       <div className="topbar">
         <span>
           Question {current + 1} of {quizQuestions.length}
+        </span>
+        <span className={hurry ? 'timer hurry' : 'timer'} aria-label={`${timeLeft} seconds left`}>
+          ⏱ {formatTime(timeLeft)}
         </span>
         <span className="score">⭐ Score: {score}</span>
       </div>
@@ -161,9 +202,13 @@ export default function App() {
           </p>
         )}
         {done && (
-          <p className={failed ? 'feedback bad' : 'feedback good'}>
-            {tries === 0 && '✅ Correct! +1 point'}
-            {tries === 1 && '✅ Correct on your second try! (no point this time)'}
+          <p className={failed || timedOut ? 'feedback bad' : 'feedback good'}>
+            {timedOut &&
+              `⏰ Time's up! The right answer${isMulti ? 's are' : ' is'}: ${rightAnswers}. ${
+                isLast ? 'Showing your result…' : 'Moving to the next question…'
+              }`}
+            {!timedOut && tries === 0 && '✅ Correct! +1 point'}
+            {!timedOut && tries === 1 && '✅ Correct on your second try! (no point this time)'}
             {failed && `❌ Out of tries. The right answer${isMulti ? 's are' : ' is'}: ${rightAnswers}`}
           </p>
         )}
