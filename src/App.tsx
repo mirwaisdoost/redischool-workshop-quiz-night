@@ -134,25 +134,41 @@ export default function App() {
 
   if (screen === 'start') {
     return (
-      <main className="card center">
-        <div className="logo">🧠</div>
-        <h1>Quiz Night</h1>
-        <p className="lead">Test what you learned about LLMs and AI agents. Pick a topic to start!</p>
-        <div className="topics">
-          {topics.map((t) => (
-            <button key={t.id} className="topic" onClick={() => startQuiz(t)}>
-              <span className="topic-emoji">{t.emoji}</span>
-              <span className="topic-name">{t.name}</span>
-              <span className="topic-description">{t.description}</span>
-            </button>
-          ))}
+      <main className="card start">
+        <header className="start-header">
+          <h1>
+            <span aria-hidden="true">🧠</span> Quiz Night
+          </h1>
+          <p className="lead">Test what you learned about LLMs and AI agents. Pick a topic to start!</p>
+        </header>
+
+        {/* Two columns side by side; on small screens they stack (see .columns in index.css). */}
+        <div className="columns">
+          <section className="panel" aria-labelledby="rules-title">
+            <h2 id="rules-title">📋 Rules</h2>
+            <ul className="rules">
+              <li>Each topic has {topic.questions.length} questions, and you get two tries for each one.</li>
+              <li>Some questions have one right answer, others ask you to choose all that apply.</li>
+              <li>A right answer on the first try earns a point.</li>
+              <li>
+                You have {secondsPerQuestion} seconds for each question. When the time runs out, the quiz moves on.
+              </li>
+            </ul>
+          </section>
+
+          <section aria-labelledby="topics-title">
+            <h2 id="topics-title">🗂️ Topics</h2>
+            <div className="topics">
+              {topics.map((t) => (
+                <button key={t.id} className="topic" onClick={() => startQuiz(t)}>
+                  <span className="topic-emoji">{t.emoji}</span>
+                  <span className="topic-name">{t.name}</span>
+                  <span className="topic-description">{t.description}</span>
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
-        <ul className="rules">
-          <li>Each topic has {topic.questions.length} questions, and you get two tries for each one.</li>
-          <li>Some questions have one right answer, others ask you to choose all that apply.</li>
-          <li>A right answer on the first try earns a point.</li>
-          <li>You have 30 seconds for each question. When the time runs out, the quiz moves on.</li>
-        </ul>
       </main>
     )
   }
