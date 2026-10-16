@@ -33,7 +33,7 @@ Multiple-choice questions about LLMs, tokens, context windows and AI agents. The
 
 ## Out of scope
 
-- Categories and difficulty levels
+- Difficulty levels
 - Saving high scores
 - More than one player
 - Level-ups from README.md, until the team adds them to this brief
@@ -49,4 +49,5 @@ When an override is requested, replace "None" with the specific participant deci
 - Second chance (2026-10-16, Mirwais): a wrong answer stays red and the player gets one more try; the right answer is shown only after two wrong tries. Only a right answer on the first try earns a point.
 - "Choose all that apply" questions (2026-10-16, Mirwais): some questions have more than one right answer. The player ticks answers and clicks "Check answer"; the same two-try rule applies. Two of them are in the first five, so they show up in the game.
 - Question timer (2026-10-16, Nataliia, overrides "Timer" being out of scope): each question has 30 seconds (changed from 1 minute), counting down from when it appears. If the time runs out before the question is finished, the app says "Time's up!", shows the right answer, gives no point and moves on to the next question (or the result) after 3 seconds.
+- Topics (2026-10-16, Mirwais, overrides "Categories" being out of scope): the start screen shows four topics (LLM basics, Tokens and context, AI agents, Using AI well). The player picks one and answers that topic's five questions. The result screen offers "Play again" (same topic) and "Choose another topic". All questions live in `src/questions.ts`, grouped by topic.
 - New look (2026-10-16, Mirwais): card layout on a colourful background, progress bar, A–D answer badges and a result message that depends on the score.

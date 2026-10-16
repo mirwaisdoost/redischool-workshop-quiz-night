@@ -1,8 +1,6 @@
 import { useEffect, useEffectEvent, useState } from 'react'
-import { questions } from './questions'
+import { topics, type Topic } from './questions'
 
-// The quiz plays the first five questions from questions.ts.
-const quizQuestions = questions.slice(0, 5)
 const letters = ['A', 'B', 'C', 'D']
 const secondsPerQuestion = 30
 
@@ -28,6 +26,7 @@ function formatTime(seconds: number) {
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('start')
+  const [topic, setTopic] = useState<Topic>(topics[0]) // the topic the player picked
   const [current, setCurrent] = useState(0) // index of the current question
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState<number[]>([]) // ticked answers in a "choose all" question
@@ -37,6 +36,7 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState(secondsPerQuestion) // seconds left on this question
   const [timedOut, setTimedOut] = useState(false) // true when the time ran out before an answer
 
+  const quizQuestions = topic.questions
   const question = quizQuestions[current]
   const isMulti = question.correct.length > 1
 
@@ -49,7 +49,8 @@ export default function App() {
     setTimedOut(false)
   }
 
-  function startQuiz() {
+  function startQuiz(chosen: Topic) {
+    setTopic(chosen)
     setCurrent(0)
     setScore(0)
     resetQuestion()
@@ -118,17 +119,22 @@ export default function App() {
       <main className="card center">
         <div className="logo">🧠</div>
         <h1>Quiz Night</h1>
-        <p className="lead">
-          Test what you learned about LLMs and AI agents. {quizQuestions.length} questions, two tries each.
-        </p>
+        <p className="lead">Test what you learned about LLMs and AI agents. Pick a topic to start!</p>
+        <div className="topics">
+          {topics.map((t) => (
+            <button key={t.id} className="topic" onClick={() => startQuiz(t)}>
+              <span className="topic-emoji">{t.emoji}</span>
+              <span className="topic-name">{t.name}</span>
+              <span className="topic-description">{t.description}</span>
+            </button>
+          ))}
+        </div>
         <ul className="rules">
+          <li>Each topic has {topic.questions.length} questions, and you get two tries for each one.</li>
           <li>Some questions have one right answer, others ask you to choose all that apply.</li>
           <li>A right answer on the first try earns a point.</li>
           <li>You have 30 seconds for each question. When the time runs out, the quiz moves on.</li>
         </ul>
-        <button className="primary" onClick={startQuiz}>
-          Start
-        </button>
       </main>
     )
   }
@@ -136,14 +142,21 @@ export default function App() {
   if (screen === 'result') {
     return (
       <main className="card center">
+        <div className="logo">{topic.emoji}</div>
         <h1>Your result</h1>
+        <p className="lead">{topic.name}</p>
         <p className="big">
           {score} of {quizQuestions.length}
         </p>
         <p className="lead">{resultMessage(score, quizQuestions.length)}</p>
-        <button className="primary" onClick={startQuiz}>
-          Play again
-        </button>
+        <div className="buttons">
+          <button className="primary" onClick={() => startQuiz(topic)}>
+            Play again
+          </button>
+          <button className="secondary" onClick={() => setScreen('start')}>
+            Choose another topic
+          </button>
+        </div>
       </main>
     )
   }
@@ -169,7 +182,10 @@ export default function App() {
         <div className="progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      {isMulti && <p className="tag">Choose all that apply</p>}
+      <p className="topic-label">
+        {topic.emoji} {topic.name}
+        {isMulti && <span className="tag">Choose all that apply</span>}
+      </p>
       <h2>{question.text}</h2>
 
       <div className="options">
