@@ -47,4 +47,4 @@ When an override is requested, replace "None" with the specific participant deci
 
 ## Project decisions
 
-None yet.
+- Second chance (2026-10-16, Mirwais): a wrong answer stays red and the player gets one more try; the right answer is shown only after two wrong tries. Only a right answer on the first try earns a point.
