@@ -126,6 +126,76 @@ button:disabled {
   transition: width 0.3s;
 }
 
+.topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.topic {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  color: var(--text);
+  background: #f7f5ff;
+  border: 2px solid #e2dfee;
+  border-radius: 1rem;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.topic:hover {
+  border-color: var(--purple);
+  transform: translateY(-2px);
+}
+
+.topic-emoji {
+  font-size: 2rem;
+}
+
+.topic-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.topic-description {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.topic-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.secondary {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--purple);
+  background: white;
+  border: 2px solid var(--purple);
+  border-radius: 999px;
+}
+
+.secondary:hover {
+  background: #f7f5ff;
+}
+
 .tag {
   display: inline-block;
   margin: 0;
