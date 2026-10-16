@@ -41,7 +41,7 @@ Multiple-choice questions about LLMs, tokens, context windows and AI agents. The
 
 ## Explicit overrides
 
-None. Use the defaults in `AGENTS.md` unless the participant explicitly requests an override.
+- Git push (2026-10-16): Mirwais allowed the agent to push the quiz commits to the `claude/project-thread-jfgisj` branch on GitHub. Scope: that branch only; all other Git rules still apply.
 
 When an override is requested, replace "None" with the specific participant decision and its scope. Only record decisions actually requested or approved by the participant; the agent must not propose alternative stacks or excluded features proactively.
 
